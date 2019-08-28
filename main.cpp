@@ -386,32 +386,6 @@ int main() {
 
 
     //=============================================================================
-    // CAN 初期化
-    //-----------------------------------------------------------------------------
-    CANHANDLE canhandle = -1;
-
-    MultiTypeUnion b2f_l;
-    b2f_l.ui[0] = b2f_l.ui[1] = 0;
-    CANMsg canmsg_l;
-    canmsg_l.id = 0x124;
-    canmsg_l.len = 8;
-    canmsg_l.flags = 0;
-
-    MultiTypeUnion b2f_r;
-    b2f_r.ui[0] = b2f_r.ui[1] = 0;
-    CANMsg canmsg_r;
-    canmsg_r.id = 0x125;
-    canmsg_r.len = 8;
-    canmsg_r.flags = 0;
-    if (!((canhandle = canusb_Open(NULL, "500", CANUSB_ACCEPTANCE_CODE_ALL, CANUSB_ACCEPTANCE_MASK_ALL, CANUSB_FLAG_TIMESTAMP)) > 0)) {
-        cout << "no CANUSB mode" << endl;
-    }
-    Sleep(1000);
-    //=============================================================================
-
-
-
-    //=============================================================================
     // GPU使う用宣言
     //-----------------------------------------------------------------------------
 #include "opencv2/core/cuda.hpp"
@@ -802,40 +776,6 @@ int main() {
 
 
             //=============================================================================
-            // CAN出力
-            //-----------------------------------------------------------------------------
-            if (canhandle > 0) {
-                // Write CAN message
-                ++b2f_l.ui[0];
-                ++b2f_r.ui[0];
-                if ((-5000 < Y_l) && (Y_l < 5000)) {
-                    b2f_l.f[1] = Y_l;
-                    temp_l = Y_l;
-                }
-                else {
-                    b2f_l.f[1] = temp_l;
-                }
-                if ((-5000 < Y_r) && (Y_r < 5000)) {
-                    b2f_r.f[1] = Y_r;
-                    temp_r = Y_r;
-                }
-                else {
-                    b2f_r.f[1] = temp_r;
-                }
-
-                for (int i = 0; i < 8; ++i) {
-                    canmsg_l.data[i] = b2f_l.c[i];
-                    canmsg_r.data[i] = b2f_r.c[i];
-                }
-                canusb_Write(canhandle, &canmsg_l);
-                canusb_Write(canhandle, &canmsg_r);
-            }
-            if (end_frame_count_l < b2f_l.ui[0]) { break; }
-            //=============================================================================
-
-
-
-            //=============================================================================
             // 変数初期化
             //-----------------------------------------------------------------------------
             kouten_true_l = Point2d(0.0, -1000000000000.0);
@@ -919,9 +859,6 @@ int main() {
     frame_ofs << START_FRAME_COUNT << endl;
     frame_ofs << END_FRAME_COUNT;
 
-    if (canhandle > 0) {
-        canusb_Close(canhandle);
-    }
     return 0;
     //=============================================================================
 }
