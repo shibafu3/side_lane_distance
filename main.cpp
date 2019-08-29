@@ -399,45 +399,6 @@ int main() {
     //=============================================================================
     // GPU使う用宣言
     //-----------------------------------------------------------------------------
-#include "opencv2/core/cuda.hpp"
-#include "opencv2/imgproc.hpp"
-    int window_size_l = 21;
-    cv::cuda::GpuMat gpu_src_l;
-    cv::cuda::GpuMat gpu_dst_l;
-    cv::Ptr<cv::cuda::Filter> gmedian_l = cv::cuda::createMedianFilter(gpu_src_l.type(), window_size_l);
-    cv::Ptr<cv::cuda::CannyEdgeDetector> gcanny_l = cv::cuda::createCannyEdgeDetector(CANNY_THRESHOLD1_L, CANNY_THRESHOLD2_L);
-    cv::Ptr<cv::cuda::HoughLinesDetector> ghough_l = cv::cuda::createHoughLinesDetector(1.0, CV_PI / 180, HOUGH_THRESHOLD_L, HOUGH_MIN_L, HOUGH_MAX_L);
-
-    cv::cuda::GpuMat gframe_l;
-    cv::cuda::GpuMat xmap_l(remapx_l);
-    cv::cuda::GpuMat ymap_l(remapy_l);
-    cv::cuda::GpuMat gremap_image_l;
-    cv::cuda::GpuMat ggray_image_l;
-    cv::cuda::GpuMat gmedian_image_l;
-    cv::cuda::GpuMat gdifferential_image_l;
-    cv::cuda::GpuMat gmask_image_l(mask_image_l);
-    cv::cuda::GpuMat gmasked_image_l;
-    cv::cuda::GpuMat ghough_result_l;
-    vector<Vec2f> ghough_lines_l;
-
-    int window_size_r = 21;
-    cv::cuda::GpuMat gpu_src_r;
-    cv::cuda::GpuMat gpu_dst_r;
-    cv::Ptr<cv::cuda::Filter> gmedian_r = cv::cuda::createMedianFilter(gpu_src_r.type(), window_size_r);
-    cv::Ptr<cv::cuda::CannyEdgeDetector> gcanny_r = cv::cuda::createCannyEdgeDetector(CANNY_THRESHOLD1_R, CANNY_THRESHOLD2_R);
-    cv::Ptr<cv::cuda::HoughLinesDetector> ghough_r = cv::cuda::createHoughLinesDetector(1.0, CV_PI / 180, HOUGH_THRESHOLD_R, HOUGH_MIN_R, HOUGH_MAX_R);
-
-    cv::cuda::GpuMat gframe_r;
-    cv::cuda::GpuMat xmap_r(remapx_r);
-    cv::cuda::GpuMat ymap_r(remapy_r);
-    cv::cuda::GpuMat gremap_image_r;
-    cv::cuda::GpuMat ggray_image_r;
-    cv::cuda::GpuMat gmedian_image_r;
-    cv::cuda::GpuMat gdifferential_image_r;
-    cv::cuda::GpuMat gmask_image_r(mask_image_r);
-    cv::cuda::GpuMat gmasked_image_r;
-    cv::cuda::GpuMat ghough_result_r;
-    vector<Vec2f> ghough_rines_r;
     //=============================================================================
 
 
@@ -553,17 +514,17 @@ int main() {
             //=============================================================================
             // 中間値フィルター
             //-----------------------------------------------------------------------------
-            //medianBlur(gray_image_l, median_image_l, 11);
+            medianBlur(gray_image_l, median_image_l, 11);
 
-            //medianBlur(gray_image_r, median_image_r, 11);
+            medianBlur(gray_image_r, median_image_r, 11);
 
-            ggray_image_l.upload(gray_image_l);
-            gmedian_l->apply(ggray_image_l, gmedian_image_l);
-            gmedian_image_l.download(median_image_l);
+            //ggray_image_l.upload(gray_image_l);
+            //gmedian_l->apply(ggray_image_l, gmedian_image_l);
+            //gmedian_image_l.download(median_image_l);
 
-            ggray_image_r.upload(gray_image_r);
-            gmedian_r->apply(ggray_image_r, gmedian_image_r);
-            gmedian_image_r.download(median_image_r);
+            //ggray_image_r.upload(gray_image_r);
+            //gmedian_r->apply(ggray_image_r, gmedian_image_r);
+            //gmedian_image_r.download(median_image_r);
             //=============================================================================
 
 
