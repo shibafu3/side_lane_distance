@@ -1,17 +1,19 @@
+#ifdef __WIN32
 #ifdef _DEBUG
-//Debugƒ‚[ƒh‚Ìê‡
+//Debugãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 #pragma comment(lib,"D:/home/Sources/opencv/opencv310/build/install/lib/opencv_world310d.lib")
 #else
-//Releaseƒ‚[ƒh‚Ìê‡
+//Releaseãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 #pragma comment(lib,"D:/home/Sources/opencv/opencv310/build/install/lib/opencv_world310.lib") 
 #endif
 
 #ifdef _DEBUG
-//Debugƒ‚[ƒh‚Ìê‡
+//Debugãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 #pragma comment(lib,"D:/home/Sources/CANUSB/lib/canusbdrv64.lib")
 #else
-//Releaseƒ‚[ƒh‚Ìê‡
+//Releaseãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 #pragma comment(lib,"D:/home/Sources/CANUSB/lib/canusbdrv64.lib")
+#endif
 #endif
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -22,13 +24,13 @@
 #include <vector>
 #define _USE_MATH_DEFINES
 #include <math.h>
-/*OpenCVƒ‰ƒCƒuƒ‰ƒŠ*/
+/*OpenCVãƒ©ã‚¤ãƒ–ãƒ©ãƒª*/
 #include <opencv2/opencv.hpp>
-//Mat‚Æ‚©s—ñƒ‚ƒWƒ…[ƒ‹
+//Matã¨ã‹è¡Œåˆ—ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
 #include <opencv2/core/core.hpp>
-//GUIƒ‚ƒWƒ…[ƒ‹
+//GUIãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
 #include <opencv2/highgui/highgui.hpp>
-//ƒLƒƒƒŠƒuƒŒ[ƒVƒ‡ƒ“ƒ‚ƒWƒ…[ƒ‹
+//ã‚­ãƒ£ãƒªãƒ–ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
 #include <opencv2/calib3d/calib3d.hpp>
 
 #include <lawicel_can.h>
@@ -56,7 +58,7 @@ int ConsoleGraph(double value, double scale, int offset = 0, double max = 0) {
 
 int main() {
     //=============================================================================
-    // İ’è’l’è‹`
+    // è¨­å®šå€¤å®šç¾©
     //-----------------------------------------------------------------------------
     int MEDIAN_WINDOW_SIZE_L = 21;
     int CANNY_THRESHOLD1_L = 50;
@@ -87,7 +89,7 @@ int main() {
 
 
     //=============================================================================
-    // ƒtƒ@ƒCƒ‹‚©‚çİ’è’l‚ğ“Ç‚İ‚İ
+    // ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰è¨­å®šå€¤ã‚’èª­ã¿è¾¼ã¿
     //-----------------------------------------------------------------------------
     ifstream canny_ifs_l("C:/Users/0133752/Desktop/workspace/process_param/canny_l.txt");
     ifstream hough_ifs_l("C:/Users/0133752/Desktop/workspace/process_param/hough_l.txt");
@@ -174,7 +176,7 @@ int main() {
 
 
     //=============================================================================
-    // İ’è’l‘‚«o‚µ
+    // è¨­å®šå€¤æ›¸ãå‡ºã—
     //-----------------------------------------------------------------------------
     ofstream canny_ofs_l("C:/Users/0133752/Desktop/canny_l.txt");
     ofstream hough_ofs_l("C:/Users/0133752/Desktop/hough_l.txt");
@@ -194,39 +196,39 @@ int main() {
 
 
     //=============================================================================
-    // •Ï”éŒ¾
+    // å¤‰æ•°å®£è¨€
     //-----------------------------------------------------------------------------
-    //‹‚ß‚½ƒJƒƒ‰s—ñ‚ğ“ü‚ê‚éMat
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’å…¥ã‚Œã‚‹Mat
     Mat camera_matrix_l;
-    //‹‚ß‚½˜c‚İƒxƒNƒgƒ‹‚ğ“ü‚ê‚éMat
+    //æ±‚ã‚ãŸæ­ªã¿ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹Mat
     Mat dist_coeffs_l;
-    //‹‚ß‚½ƒJƒƒ‰‰ñ“]ƒxƒNƒgƒ‹‚ğ“ü‚ê‚évector
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©å›è»¢ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹vector
     vector<Mat> rvecs_l;
-    //‹‚ß‚½ƒJƒƒ‰•ÀiƒxƒNƒgƒ‹‚ğ“ü‚ê‚évector
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©ä¸¦é€²ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹vector
     vector<Mat> tvecs_l;
-    //•â³ƒ}ƒbƒv
+    //è£œæ­£ãƒãƒƒãƒ—
     Mat remapx_l, remapy_l;
-    // ƒƒhƒŠƒQƒX‚©‚çˆê—ñ”²‚¢‚½‚â‚Â
+    // ãƒ­ãƒ‰ãƒªã‚²ã‚¹ã‹ã‚‰ä¸€åˆ—æŠœã„ãŸã‚„ã¤
     Mat rtvecs_l(3, 3, CV_64FC1, Scalar::all(0));
 
-    //‹‚ß‚½ƒJƒƒ‰s—ñ‚ğ“ü‚ê‚éMat
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’å…¥ã‚Œã‚‹Mat
     Mat camera_matrix_r;
-    //‹‚ß‚½˜c‚İƒxƒNƒgƒ‹‚ğ“ü‚ê‚éMat
+    //æ±‚ã‚ãŸæ­ªã¿ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹Mat
     Mat dist_coeffs_r;
-    //‹‚ß‚½ƒJƒƒ‰‰ñ“]ƒxƒNƒgƒ‹‚ğ“ü‚ê‚évector
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©å›è»¢ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹vector
     vector<Mat> rvecs_r;
-    //‹‚ß‚½ƒJƒƒ‰•ÀiƒxƒNƒgƒ‹‚ğ“ü‚ê‚évector
+    //æ±‚ã‚ãŸã‚«ãƒ¡ãƒ©ä¸¦é€²ãƒ™ã‚¯ãƒˆãƒ«ã‚’å…¥ã‚Œã‚‹vector
     vector<Mat> tvecs_r;
-    //•â³ƒ}ƒbƒv
+    //è£œæ­£ãƒãƒƒãƒ—
     Mat remapx_r, remapy_r;
-    // ƒƒhƒŠƒQƒX‚©‚çˆê—ñ”²‚¢‚½‚â‚Â
+    // ãƒ­ãƒ‰ãƒªã‚²ã‚¹ã‹ã‚‰ä¸€åˆ—æŠœã„ãŸã‚„ã¤
     Mat rtvecs_r(3, 3, CV_64FC1, Scalar::all(0));
     //=============================================================================
 
 
 
     //=============================================================================
-    // ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+    // ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
     //-----------------------------------------------------------------------------
     FileStorage cvfs_internal_l("C:/Users/0133752/Desktop/workspace/vehicle_param/calibrate_l.xml", FileStorage::READ);
     FileNode node_internal_l(cvfs_internal_l.fs, NULL);
@@ -259,7 +261,7 @@ int main() {
 
 
     //=============================================================================
-    // ƒJƒƒ‰‰Šú‰»
+    // ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
     //-----------------------------------------------------------------------------
     Mat frame_l;
     Mat remap_image_l;
@@ -296,7 +298,7 @@ int main() {
 
 
     //=============================================================================
-    // ”’ü”F¯ƒCƒ“ƒXƒ^ƒ“ƒXì¬
+    // ç™½ç·šèªè­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
     //-----------------------------------------------------------------------------
     vector<Vec4i> probabilistic_hough_lines_l;
 
@@ -306,7 +308,7 @@ int main() {
 
 
     //=============================================================================
-    // ‹——£ŒvZ—pƒxƒNƒgƒ‹
+    // è·é›¢è¨ˆç®—ç”¨ãƒ™ã‚¯ãƒˆãƒ«
     //-----------------------------------------------------------------------------
     Mat image_point_l(3, 1, CV_64FC1, Scalar::all(0));
     image_point_l.at<double>(2, 0) = 1;
@@ -357,7 +359,7 @@ int main() {
 
 
     //=============================================================================
-    // Œğ“_ŒŸo—p•Ï”
+    // äº¤ç‚¹æ¤œå‡ºç”¨å¤‰æ•°
     //-----------------------------------------------------------------------------
     Point2d reference_point1_l = REFERENCE_POINT1_L;
     Point2d reference_point2_l = REFERENCE_POINT2_L;
@@ -385,7 +387,7 @@ int main() {
 
 
     //=============================================================================
-    // CAN ‰Šú‰»
+    // CAN åˆæœŸåŒ–
     //-----------------------------------------------------------------------------
     CANHANDLE canhandle = -1;
 
@@ -411,7 +413,7 @@ int main() {
 
 
     //=============================================================================
-    // GPUg‚¤—péŒ¾
+    // GPUä½¿ã†ç”¨å®£è¨€
     //-----------------------------------------------------------------------------
 #include "opencv2/core/cuda.hpp"
 #include "opencv2/imgproc.hpp"
@@ -457,10 +459,10 @@ int main() {
 
 
     //=============================================================================
-    // ƒ^ƒCƒ€‘ª’è—p•Ï”éŒ¾
+    // ã‚¿ã‚¤ãƒ æ¸¬å®šç”¨å¤‰æ•°å®£è¨€
     //-----------------------------------------------------------------------------
     LARGE_INTEGER freq;
-    if (!QueryPerformanceFrequency(&freq))      // ’PˆÊK“¾
+    if (!QueryPerformanceFrequency(&freq))      // å˜ä½ç¿’å¾—
         return 0;
     LARGE_INTEGER start, end, sstart;
     double time = 0;
@@ -471,7 +473,7 @@ int main() {
 
 
     //=============================================================================
-    // ƒXƒ^[ƒgƒtƒŒ[ƒ€İ’è
+    // ã‚¹ã‚¿ãƒ¼ãƒˆãƒ•ãƒ¬ãƒ¼ãƒ è¨­å®š
     //-----------------------------------------------------------------------------
     int start_frame_count_l = START_FRAME_COUNT;
     int end_frame_count_l = END_FRAME_COUNT;
@@ -515,7 +517,7 @@ int main() {
     int key = 0;
     while (1) {
         //=============================================================================
-        // ƒ^ƒCƒ€‘ª’è
+        // ã‚¿ã‚¤ãƒ æ¸¬å®š
         //-----------------------------------------------------------------------------
         QueryPerformanceCounter(&end);
         time = (double)(end.QuadPart - start.QuadPart) / freq.QuadPart;
@@ -526,7 +528,7 @@ int main() {
 
 
             //=============================================================================
-            // ‰æ‘œæ‚è‚İ ”ÍˆÍØ‚èæ‚è
+            // ç”»åƒå–ã‚Šè¾¼ã¿ ç¯„å›²åˆ‡ã‚Šå–ã‚Š
             //-----------------------------------------------------------------------------
             if (pause == 0) {
                 cap_l >> frame_l; if (frame_l.empty()) { break; }
@@ -561,7 +563,7 @@ int main() {
 
 
             //=============================================================================
-            // F•ÏŠ·
+            // è‰²å¤‰æ›
             //-----------------------------------------------------------------------------
             cvtColor(remap_image_l, gray_image_l, CV_RGB2GRAY);
 
@@ -576,7 +578,7 @@ int main() {
 
 
             //=============================================================================
-            // ’†ŠÔ’lƒtƒBƒ‹ƒ^[
+            // ä¸­é–“å€¤ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼
             //-----------------------------------------------------------------------------
             //medianBlur(gray_image_l, median_image_l, 11);
 
@@ -594,7 +596,7 @@ int main() {
 
 
             //=============================================================================
-            // “ñ’l‰»
+            // äºŒå€¤åŒ–
             //-----------------------------------------------------------------------------
             threshold(median_image_l, binary_image_l, BINARY_THRESHOLD1_L, BINARY_THRESHOLD2_L, THRESH_BINARY);
 
@@ -604,7 +606,7 @@ int main() {
 
 
             //=============================================================================
-            // ”÷•ª
+            // å¾®åˆ†
             //-----------------------------------------------------------------------------
             Canny(binary_image_l, differential_image_l, CANNY_THRESHOLD1_L, CANNY_THRESHOLD2_L);
 
@@ -618,7 +620,7 @@ int main() {
 
 
             //=============================================================================
-            // ƒ}ƒXƒNˆ—
+            // ãƒã‚¹ã‚¯å‡¦ç†
             //-----------------------------------------------------------------------------
             differential_image_l.copyTo(masked_image_l, mask_image_l);
 
@@ -633,21 +635,21 @@ int main() {
 
 
             //=============================================================================
-            // ƒnƒt•ÏŠ· Œğ“_ŒŸo
+            // ãƒãƒ•å¤‰æ› äº¤ç‚¹æ¤œå‡º
             //-----------------------------------------------------------------------------
-            //                                                              •ª‰ğ”\A  è‡’l,Å¬’·,Å‘å’·
+            //                                                              åˆ†è§£èƒ½ã€  é–¾å€¤,æœ€å°é•·,æœ€å¤§é•·
             HoughLinesP(masked_image_l, probabilistic_hough_lines_l, 1.0, CV_PI / 180, HOUGH_THRESHOLD_L, HOUGH_MIN_L, HOUGH_MAX_L);
             for (int i = 0; i < probabilistic_hough_lines_l.size(); ++i) {
-                // ’¼ü‚ÌŒX‚«ŒvZ
+                // ç›´ç·šã®å‚¾ãè¨ˆç®—
                 if (probabilistic_hough_lines_l[i][2] - probabilistic_hough_lines_l[i][0] == 0) { continue; }
                 c_l = double(probabilistic_hough_lines_l[i][3] - probabilistic_hough_lines_l[i][1]) / double(probabilistic_hough_lines_l[i][2] - probabilistic_hough_lines_l[i][0]);
                 d_l = -probabilistic_hough_lines_l[i][0] * c_l + probabilistic_hough_lines_l[i][1];
-                // Œğ“_ŒŸo
+                // äº¤ç‚¹æ¤œå‡º
                 kouten_l = Point2d((d_l - b_l) / (a_l - c_l), (a_l*d_l - b_l * c_l) / (a_l - c_l));
                 if ((kouten_l.y > kouten_true_l.y) && (540 > kouten_l.y)) {
                     kouten_true_l = kouten_l;
                 }
-                // •\¦
+                // è¡¨ç¤º
                 line(view_image_l, Point(probabilistic_hough_lines_l[i][0], probabilistic_hough_lines_l[i][1]),
                     Point(probabilistic_hough_lines_l[i][2], probabilistic_hough_lines_l[i][3]), Scalar(0, 0, 255), 1, CV_AA);
                 line(view_image_l, reference_point1_l, reference_point2_l, Scalar(255, 255, 0), 1, CV_AA);
@@ -657,16 +659,16 @@ int main() {
 
             HoughLinesP(masked_image_r, probabilistic_hough_lines_r, 1.0, CV_PI / 180, HOUGH_THRESHOLD_L, HOUGH_MIN_L, HOUGH_MAX_L);
             for (int i = 0; i < probabilistic_hough_lines_r.size(); ++i) {
-                // ’¼ü‚ÌŒX‚«ŒvZ
+                // ç›´ç·šã®å‚¾ãè¨ˆç®—
                 if (probabilistic_hough_lines_r[i][2] - probabilistic_hough_lines_r[i][0] == 0) { continue; }
                 c_r = double(probabilistic_hough_lines_r[i][3] - probabilistic_hough_lines_r[i][1]) / double(probabilistic_hough_lines_r[i][2] - probabilistic_hough_lines_r[i][0]);
                 d_r = -probabilistic_hough_lines_r[i][0] * c_r + probabilistic_hough_lines_r[i][1];
-                // Œğ“_ŒŸo
+                // äº¤ç‚¹æ¤œå‡º
                 kouten_r = Point2d((d_r - b_r) / (a_r - c_r), (a_r*d_r - b_r * c_r) / (a_r - c_r));
                 if ((kouten_r.y > kouten_true_r.y) && (540 > kouten_r.y)) {
                     kouten_true_r = kouten_r;
                 }
-                // •\¦
+                // è¡¨ç¤º
                 line(view_image_r, Point(probabilistic_hough_lines_r[i][0], probabilistic_hough_lines_r[i][1]),
                     Point(probabilistic_hough_lines_r[i][2], probabilistic_hough_lines_r[i][3]), Scalar(0, 0, 255), 1, CV_AA);
                 line(view_image_r, reference_point1_r, reference_point2_r, Scalar(255, 255, 0), 1, CV_AA);
@@ -686,16 +688,16 @@ int main() {
             //    pt2.x = cvRound(x0 - 1000 * (-b_l));
             //    pt2.y = cvRound(y0 - 1000 * (a_l));
 
-            //    // ’¼ü‚ÌŒX‚«ŒvZ
+            //    // ç›´ç·šã®å‚¾ãè¨ˆç®—
             //    if (pt2.x - pt1.x == 0) { continue; }
             //    c_l = double(pt2.y - pt1.y) / double(pt2.x - pt1.x);
             //    d_l = -pt1.x * c_l + pt1.y;
-            //    // Œğ“_ŒŸo
+            //    // äº¤ç‚¹æ¤œå‡º
             //    kouten_l = Point2d((d_l - b_l) / (a_l - c_l), (a_l*d_l - b_l*c_l) / (a_l - c_l));
             //    if ((kouten_l.y > kouten_true_l.y) && (540 > kouten_l.y)) {
             //        kouten_true_l = kouten_l;
             //    }
-            //    // •\¦
+            //    // è¡¨ç¤º
             //    line(frame_l, Point(pt1.x, pt1.y),
             //        Point(pt2.x, pt2.y), Scalar(0, 0, 255), 1, CV_AA);
             //    line(frame_l, reference_point1_l, reference_point2_l, Scalar(255, 255, 0), 1, CV_AA);
@@ -715,16 +717,16 @@ int main() {
             //    pt2.x = cvRound(x0 - 1000 * (-b_r));
             //    pt2.y = cvRound(y0 - 1000 * (a_r));
 
-            //    // ’¼ü‚ÌŒX‚«ŒvZ
+            //    // ç›´ç·šã®å‚¾ãè¨ˆç®—
             //    if (pt2.x - pt1.x == 0) { continue; }
             //    c_r = double(pt2.y - pt1.y) / double(pt2.x - pt1.x);
             //    d_r = -pt1.x * c_r + pt1.y;
-            //    // Œğ“_ŒŸo
+            //    // äº¤ç‚¹æ¤œå‡º
             //    kouten_r = Point2d((d_r - b_r) / (a_r - c_r), (a_r*d_r - b_r*c_r) / (a_r - c_r));
             //    if ((kouten_r.y > kouten_true_r.y) && (540 > kouten_r.y)) {
             //        kouten_true_r = kouten_r;
             //    }
-            //    // •\¦
+            //    // è¡¨ç¤º
             //    line(frame_r, Point(pt1.x, pt1.y),
             //        Point(pt2.x, pt2.y), Scalar(0, 0, 255), 1, CV_AA);
             //    line(frame_r, reference_point1_r, reference_point2_r, Scalar(255, 255, 0), 1, CV_AA);
@@ -736,7 +738,7 @@ int main() {
 
 
             //=============================================================================
-            // ƒ[ƒ‹ƒhÀ•W‹——£Zo
+            // ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™è·é›¢ç®—å‡º
             //-----------------------------------------------------------------------------
             image_point_l.at<double>(0, 0) = kouten_true_l.x;
             image_point_l.at<double>(1, 0) = kouten_true_l.y;
@@ -772,7 +774,7 @@ int main() {
 
 
             //=============================================================================
-            // CANo—Í
+            // CANå‡ºåŠ›
             //-----------------------------------------------------------------------------
             if (canhandle > 0) {
                 // Write CAN message
@@ -806,7 +808,7 @@ int main() {
 
 
             //=============================================================================
-            // •Ï”‰Šú‰»
+            // å¤‰æ•°åˆæœŸåŒ–
             //-----------------------------------------------------------------------------
             kouten_true_l = Point2d(0.0, -1000000000000.0);
             kouten_true_r = Point2d(0.0, -1000000000000.0);
@@ -815,7 +817,7 @@ int main() {
 
 
             //=============================================================================
-            // •\¦
+            // è¡¨ç¤º
             //-----------------------------------------------------------------------------
             //cout << "gazou " << kouten_true_l.x << " " << kouten_true_l.y << endl;
             cout << Y_l;
@@ -825,7 +827,7 @@ int main() {
 
 
             //=============================================================================
-            // ‰æ‘œ•\¦
+            // ç”»åƒè¡¨ç¤º
             //-----------------------------------------------------------------------------
             imshow("view_image_l", view_image_l);
             imshow("gray_l", gray_image_l);
@@ -850,7 +852,7 @@ int main() {
 
 
             //=============================================================================
-            // ƒ^ƒCƒ€‘ª’è
+            // ã‚¿ã‚¤ãƒ æ¸¬å®š
             //-----------------------------------------------------------------------------
         }
         //=============================================================================
@@ -858,7 +860,7 @@ int main() {
 
 
     //=============================================================================
-    // I—¹ˆ—
+    // çµ‚äº†å‡¦ç†
     //-----------------------------------------------------------------------------
     canny_ofs_l << CANNY_THRESHOLD1_L << endl;
     canny_ofs_l << CANNY_THRESHOLD2_L;
