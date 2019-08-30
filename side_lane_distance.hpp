@@ -282,7 +282,7 @@ public :
     }
     int ReadFrame() {
         capture >> frame;
-        return 0;
+        return frame.empty();
     }
     int ProccessImage() {
         // 表示用に元画像コピー

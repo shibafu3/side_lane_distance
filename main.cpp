@@ -28,7 +28,7 @@ int main() {
     LaneDistanceDetector ldd("data/filter_param.xml", "data/internal_param.xml", "data/external_param.xml", "data/mask_image.bmp", "data/Video2_20180625183321.avi");
 
     while(1) {
-        ldd.ReadFrame();
+        if (ldd.ReadFrame()) { break; }
         ldd.ProccessImage();
         ldd.ViewImage(1, 0, 0, 0, 0, 0, 1);
         waitKey(1);
