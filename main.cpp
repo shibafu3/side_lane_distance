@@ -30,7 +30,7 @@ int main() {
     while(1) {
         ldd.ReadFrame();
         ldd.ProccessImage();
-        ldd.ViewImage();
+        ldd.ViewImage(1, 0, 0, 0, 0, 0, 1);
         waitKey(1);
     }
     return 0;

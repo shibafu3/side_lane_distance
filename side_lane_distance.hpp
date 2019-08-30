@@ -334,6 +334,15 @@ public :
         cv::imshow("mask", mask_image);
         cv::imshow("masked", masked_image);
     }
+    int ViewImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
+        if (view) { cv::imshow("view_image", view_image); }
+        if (gray) { cv::imshow("gray", gray_image); }
+        if (median) { cv::imshow("median", median_image); }
+        if (binary) { cv::imshow("binary", binary_image); }
+        if (differencial) { cv::imshow("differencial", differential_image); }
+        if (mask) { cv::imshow("mask", mask_image); }
+        if (masked) { cv::imshow("masked", masked_image); }
+    }
     int OutputConsoleLog() {
         //cout << "gazou " << kouten_true_l.x << " " << kouten_true_l.y << endl;
         //std::cout << world_point.y;
