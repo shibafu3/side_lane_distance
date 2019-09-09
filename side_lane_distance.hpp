@@ -298,7 +298,7 @@ public :
         // 白黒へ変換
         cv::cvtColor(remap_image, gray_image, CV_RGB2GRAY);
         // メディアンフィルター
-        cv::medianBlur(gray_image, median_image, 11);
+        cv::medianBlur(gray_image, median_image, MEDIAN_WINDOW_SIZE);
         // 2値化
         cv::threshold(median_image, binary_image, BINARY_THRESHOLD1, BINARY_THRESHOLD2, cv::THRESH_BINARY);
         // 微分（エッジ検出）
