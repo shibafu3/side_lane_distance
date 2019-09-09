@@ -284,7 +284,7 @@ public :
         capture >> frame;
         return frame.empty();
     }
-    int ProccessImage() {
+    double ProccessImage() {
         // 表示用に元画像コピー
         frame.copyTo(view_image);
         // 歪み補正
@@ -319,11 +319,12 @@ public :
         }
         cv::circle(view_image, kouten_true, 3, cv::Scalar(0, 255, 0), 3);
         // 画像座標から世界座標算出
-        ConvertImagePoint2WorldPoint(kouten_true, cv::Point());
+        cv::Point2d world_point;
+        ConvertImagePoint2WorldPoint(kouten_true, world_point);
         // 変数初期化
         kouten_true = cv::Point2d(0.0, -1000000000000.0);
 
-        return 0;
+        return world_point.y;
     }
     int ViewImage() {
         cv::imshow("view_image", view_image);
