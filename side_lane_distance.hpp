@@ -47,8 +47,6 @@ class LaneDistanceDetector {
     int HOUGH_MAX;
     int BINARY_THRESHOLD1;
     int BINARY_THRESHOLD2;
-    cv::Point2d REFERENCE_POINT1;
-    cv::Point2d REFERENCE_POINT2;
     //=============================================================================
 
 
@@ -105,8 +103,6 @@ class LaneDistanceDetector {
         HOUGH_MAX = 500;
         BINARY_THRESHOLD1 = 180;
         BINARY_THRESHOLD2 = 255;
-        REFERENCE_POINT1 = cv::Point2d(365.0, 364.0);
-        REFERENCE_POINT2 = cv::Point2d(382.0, 134.0);
         ARt_Z_inv = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
     }
     //フィルターのパラメータ読み込み
@@ -136,18 +132,6 @@ class LaneDistanceDetector {
         }
         if (boost::optional<int> config_value = pt.get_optional<int>("root.BINARY_THRESHOLD2")) {
             BINARY_THRESHOLD2 = config_value.get();
-        }
-        if (boost::optional<double> config_value = pt.get_optional<double>("root.REFERENCE_POINT1.x")) {
-            REFERENCE_POINT1.x = config_value.get();
-        }
-        if (boost::optional<double> config_value = pt.get_optional<double>("root.REFERENCE_POINT1.y")) {
-            REFERENCE_POINT1.y = config_value.get();
-        }
-        if (boost::optional<double> config_value = pt.get_optional<double>("root.REFERENCE_POINT2.x")) {
-            REFERENCE_POINT2.x = config_value.get();
-        }
-        if (boost::optional<double> config_value = pt.get_optional<double>("root.REFERENCE_POINT2.y")) {
-            REFERENCE_POINT2.y = config_value.get();
         }
         return 0;
     }
@@ -233,26 +217,8 @@ class LaneDistanceDetector {
         }
         return 0;
     }
-    double a;
-    double b;
-    double c;
-    double d;
-    cv::Point2d kouten;
-    cv::Point2d kouten_true;
-    cv::Point2d reference_point1;
-    cv::Point2d reference_point2;
-    int InitCrossLine() {
-        cv::Point2d line_point1(0, 250);
-        cv::Point2d line_point2(1000, 330);
-        reference_point1 = REFERENCE_POINT1;
-        reference_point2 = REFERENCE_POINT2;
-        a = (reference_point2.y - reference_point1.y) / (reference_point2.x - reference_point1.x);
-        b = -reference_point1.x * a + reference_point1.y;
-        c = (line_point2.y - line_point1.y) / (line_point2.x - line_point1.x);
-        d = -line_point1.x * c + line_point1.y;
-        kouten = cv::Point2d((d - b) / (a - c), (a*d - b * c) / (a - c));
-        kouten_true;
-    }
+    cv::Point2d cross_point;
+    cv::Point2d cross_point_closest;
     int CalcCrossPoint(cv::Point2d A, cv::Point2d B, cv::Point2d C, cv::Point2d D, cv::Point2d &P) {
         //
         //               . A
@@ -304,7 +270,6 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(video_file_path);
-        ConvertImagePoint2WorldPoint(cv::Point2d(1000, 500), cv::Point2d());
     }
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_number) {
         InitDefaultParam();
@@ -312,7 +277,6 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
-        ConvertImagePoint2WorldPoint(cv::Point2d(1000, 500), cv::Point2d());
     }
     int OpenParamTrackbar() {
         cv::namedWindow("trackbar", cv::WINDOW_NORMAL);
@@ -347,28 +311,25 @@ public :
         differential_image.copyTo(masked_image, mask_image);
         // ハフ変換（直線検出）                                             分解能、        閾値,          最小長,     最大長
         cv::HoughLinesP(masked_image, probabilistic_hough_lines, 1.0, CV_PI / 180, HOUGH_THRESHOLD, HOUGH_MIN, HOUGH_MAX);
+        // 交点算出
         for (int i = 0; i < probabilistic_hough_lines.size(); ++i) {
-            // 直線の傾き計算
-            if (probabilistic_hough_lines[i][2] - probabilistic_hough_lines[i][0] == 0) { continue; }
-            c = double(probabilistic_hough_lines[i][3] - probabilistic_hough_lines[i][1]) / double(probabilistic_hough_lines[i][2] - probabilistic_hough_lines[i][0]);
-            d = -probabilistic_hough_lines[i][0] * c + probabilistic_hough_lines[i][1];
-            // 交点計算
-            kouten = cv::Point2d((d - b) / (a - c), (a*d - b * c) / (a - c));
+            cv::Point2d C(probabilistic_hough_lines[i][0], probabilistic_hough_lines[i][1]);
+            cv::Point2d D(probabilistic_hough_lines[i][2], probabilistic_hough_lines[i][3]);
+            if (CalcCrossPoint(checkerLT, checkerLB, C, D, cross_point)) { continue; }
             // 一番車両に近い交点抽出
-            if ((kouten.y > kouten_true.y) && (540 > kouten.y)) {
-                kouten_true = kouten;
+            if ((cross_point.y > cross_point_closest.y) && (540 > cross_point.y)) {
+                cross_point_closest = cross_point;
             }
             // 表示
-            cv::line(view_image, cv::Point(probabilistic_hough_lines[i][0], probabilistic_hough_lines[i][1]),
-                                 cv::Point(probabilistic_hough_lines[i][2], probabilistic_hough_lines[i][3]), cv::Scalar(0, 0, 255), 1, CV_AA);
-            cv::line(view_image, reference_point1, reference_point2, cv::Scalar(255, 255, 0), 1, CV_AA);
+            cv::line(view_image, C, D, cv::Scalar(0, 0, 255), 1, CV_AA);
+            cv::line(view_image, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
         }
-        cv::circle(view_image, kouten_true, 3, cv::Scalar(0, 255, 0), 3);
+        cv::circle(view_image, cross_point_closest, 3, cv::Scalar(0, 255, 0), 3);
         // 画像座標から世界座標算出
         cv::Point2d world_point;
-        ConvertImagePoint2WorldPoint(kouten_true, world_point);
+        ConvertImagePoint2WorldPoint(cross_point_closest, world_point);
         // 変数初期化
-        kouten_true = cv::Point2d(0.0, -1000000000000.0);
+        cross_point_closest = cv::Point2d(0.0, -1000000000000.0);
 
         return world_point.y;
     }
