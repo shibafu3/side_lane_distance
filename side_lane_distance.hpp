@@ -37,7 +37,19 @@ int ConsoleGraph(double value, double scale, int offset = 0, double max = 0) {
 
 class LaneDistanceDetector {
     //=============================================================================
-    // パラメータ
+    // カメラ関係変数宣言
+    //-----------------------------------------------------------------------------
+    cv::Mat camera_matrix;      // 求めたカメラ行列を入れるMat
+    cv::Mat dist_coeffs;        // 求めた歪みベクトルを入れるMat
+    std::vector<cv::Mat> rvecs; // 求めたカメラ回転ベクトルを入れるvector
+    std::vector<cv::Mat> tvecs; // 求めたカメラ並進ベクトルを入れるvector
+    cv::Mat remapx, remapy;     // 補正マップ
+    cv::Mat ARt_Z_inv;          // ARt_Z_inv
+    //=============================================================================
+
+
+    //=============================================================================
+    // 画像処理パラメータ
     //-----------------------------------------------------------------------------
     int MEDIAN_WINDOW_SIZE;
     int CANNY_THRESHOLD1;
@@ -51,23 +63,10 @@ class LaneDistanceDetector {
 
 
     //=============================================================================
-    // 変数宣言
+    // 画像処理変数宣言
     //-----------------------------------------------------------------------------
-    //求めたカメラ行列を入れるMat
-    cv::Mat camera_matrix;
-    //求めた歪みベクトルを入れるMat
-    cv::Mat dist_coeffs;
-    //求めたカメラ回転ベクトルを入れるvector
-    std::vector<cv::Mat> rvecs;
-    //求めたカメラ並進ベクトルを入れるvector
-    std::vector<cv::Mat> tvecs;
-    //補正マップ
-    cv::Mat remapx, remapy;
-    // ARt_Z_inv
-    cv::Mat ARt_Z_inv;
-    //=============================================================================
+    cv::VideoCapture capture;
 
-    //
     cv::Mat frame;
     cv::Mat remap_image;
     cv::Mat gray_image;
@@ -79,20 +78,23 @@ class LaneDistanceDetector {
     cv::Mat mask_image;
     cv::Mat masked_image;
 
+    std::vector<cv::Vec4i> probabilistic_hough_lines;
+    //=============================================================================
 
-    cv::VideoCapture capture;
 
-
+    //=============================================================================
+    // 距離算出関係変数宣言
+    //-----------------------------------------------------------------------------
     cv::Point2d checkerLT;
     cv::Point2d checkerRT;
     cv::Point2d checkerLB;
     cv::Point2d checkerRB;
 
+    cv::Point2d cross_point;
+    cv::Point2d cross_point_closest;
     //=============================================================================
-    // 白線認識インスタンス作成
-    //-----------------------------------------------------------------------------
-    std::vector<cv::Vec4i> probabilistic_hough_lines;
-    //=============================================================================
+
+
 
     int InitDefaultParam() {
         MEDIAN_WINDOW_SIZE = 21;
@@ -217,8 +219,6 @@ class LaneDistanceDetector {
         }
         return 0;
     }
-    cv::Point2d cross_point;
-    cv::Point2d cross_point_closest;
     int CalcCrossPoint(cv::Point2d A, cv::Point2d B, cv::Point2d C, cv::Point2d D, cv::Point2d &P) {
         //
         //               . A
