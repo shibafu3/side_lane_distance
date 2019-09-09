@@ -253,9 +253,49 @@ class LaneDistanceDetector {
         kouten = cv::Point2d((d - b) / (a - c), (a*d - b * c) / (a - c));
         kouten_true;
     }
-    cv::Point2d CalcCrossPoint(cv::Point2d point1, cv::Point2d point2) {
+    int CalcCrossPoint(cv::Point2d A, cv::Point2d B, cv::Point2d C, cv::Point2d D, cv::Point2d &P) {
+        //
+        //               . A
+        //   C .        /
+        //      \      /
+        //       \    L B
+        //        \
+        //         \ P = A + tAB
+        //          \
+        //           v
+        //          D
+        //
+        // A(xa, ya), B(xb, yb), C(xc, yc), D(xd, yd)
+        // tAB = AC + uCD
+        //
+        // t(xb - xa) = (xc - xa) + u(xd - xc)
+        // t(yb - ya) = (yc - ya) + u(yd - yc)
+        //
+        // tX_AB = X_AC + uX_CD
+        // tY_AB = Y_AC + uY_CD
+        //
+        // tX_AB*Y_CD = X_AC*Y_CD + uX_CD*Y_CD
+        // tY_AB*X_CD = Y_AC*X_CD + uX_CD*Y_CD
+        //
+        // t(X_AB*Y_CD - Y_AB*X_CD) = X_AC*Y_CD - Y_AC*X_CD
+        //
+        //      X_AB*Y_CD - Y_AB*X_CD
+        // t = -----------------------
+        //      X_AC*Y_CD - Y_AC*X_CD
+        //
+        // P = A + t * (B - A)
 
-        return cv::Point2d();
+        double X_AB = B.x - A.x;
+        double Y_AB = B.y - A.y;
+        double X_CD = D.x - C.x;
+        double Y_CD = D.y - C.y;
+        double X_AC = C.x - A.x;
+        double Y_AC = C.y - A.y;
+        if ((X_AB * Y_CD - Y_AB * X_CD) == 0.0) { return -1; }
+        double t = (X_AC * Y_CD - Y_AC * X_CD) / (X_AB * Y_CD - Y_AB * X_CD);
+
+        P = A + t * (B - A);
+        return 0;
     }
 public :
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, std::string video_file_path) {
