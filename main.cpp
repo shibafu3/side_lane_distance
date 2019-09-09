@@ -25,7 +25,7 @@ using namespace std;
 using namespace cv;
 
 int main() {
-    LaneDistanceDetector ldd("data/filter_param.xml", "data/internal_param.xml", "data/external_param.xml", "data/mask_image.bmp", "data/Video2_20180625183321.avi");
+    LaneDistanceDetector ldd("data/filter_param.xml", "data/in_external_param.xml", "data/mask_image.bmp", "data/Video2_20180625183321.avi");
 
     while(1) {
         if (ldd.ReadFrame()) { break; }

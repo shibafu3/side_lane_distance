@@ -84,6 +84,12 @@ class LaneDistanceDetector {
 
     cv::VideoCapture capture;
 
+
+    cv::Point2d checkerLT;
+    cv::Point2d checkerRT;
+    cv::Point2d checkerLB;
+    cv::Point2d checkerRB;
+
     //=============================================================================
     // 白線認識インスタンス作成
     //-----------------------------------------------------------------------------
@@ -146,22 +152,22 @@ class LaneDistanceDetector {
         return 0;
     }
     //カメラパラメータ読み込み
-    int ReadCameraParam(std::string internal_param_file_path, std::string external_param_file_path) {
-        cv::FileStorage cvfs_internal(internal_param_file_path, cv::FileStorage::READ);
-        cv::FileNode node_internal(cvfs_internal.fs, NULL);
-        read(node_internal["cameraMatrix"], camera_matrix);
-        read(node_internal["distCoeffs"], dist_coeffs);
-        read(node_internal["remapx"], remapx);
-        read(node_internal["remapy"], remapy);
-        cvfs_internal.release();
+    int ReadCameraParam(std::string internal_external_param_file_path) {
+        cv::FileStorage cvfs_inexternal(internal_external_param_file_path, cv::FileStorage::READ);
 
-        cv::FileStorage cvfs_external(external_param_file_path, cv::FileStorage::READ);
-        cv::FileNode node_external(cvfs_external.fs, NULL);
-        read(node_external["rvecs"], rvecs);
-        read(node_external["tvecs"], tvecs);
-        read(node_external["ARt_Z_inv"], ARt_Z_inv);
-        cvfs_external.release();
+        cvfs_inexternal["cameraMatrix"] >> camera_matrix;
+        cvfs_inexternal["distCoeffs"] >> dist_coeffs;
+        cvfs_inexternal["remapx"] >> remapx;
+        cvfs_inexternal["remapy"] >> remapy;
+        cvfs_inexternal["rvecs"] >> rvecs;
+        cvfs_inexternal["tvecs"] >> tvecs;
+        cvfs_inexternal["ARt_Z_inv"] >> ARt_Z_inv;
+        cvfs_inexternal["checker_left_top_coor"] >> checkerLT;
+        cvfs_inexternal["checker_right_top_coor"] >> checkerRT;
+        cvfs_inexternal["checker_left_bottom_coor"] >> checkerLB;
+        cvfs_inexternal["checker_right_bottom_coor"] >> checkerRB;
 
+        cvfs_inexternal.release();
         return 0;
     }
     int ReadMaskImage(std::string mask_image_file_path) {
@@ -252,18 +258,18 @@ class LaneDistanceDetector {
         return cv::Point2d();
     }
 public :
-    LaneDistanceDetector(std::string filter_file_path, std::string internal_param_file_path, std::string externai_file_path, std::string mask_image_path, std::string video_file_path) {
+    LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, std::string video_file_path) {
         InitDefaultParam();
         ReadFilterParam(filter_file_path);
-        ReadCameraParam(internal_param_file_path, externai_file_path);
+        ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(video_file_path);
         ConvertImagePoint2WorldPoint(cv::Point2d(1000, 500), cv::Point2d());
     }
-    LaneDistanceDetector(std::string filter_file_path, std::string internal_param_file_path, std::string externai_file_path, std::string mask_image_path, int camera_number) {
+    LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_number) {
         InitDefaultParam();
         ReadFilterParam(filter_file_path);
-        ReadCameraParam(internal_param_file_path, externai_file_path);
+        ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
         ConvertImagePoint2WorldPoint(cv::Point2d(1000, 500), cv::Point2d());
