@@ -170,7 +170,7 @@ class LaneDistanceDetector {
         capture = cv::VideoCapture(video_file_path);
         capture >> frame;
     }
-    int ConvertImagePoint2WorldPoint(cv::Point2d target_image_point, cv::Point2d world_point){
+    int ConvertImagePoint2WorldPoint(cv::Point2d target_image_point, cv::Point2d &world_point){
         //=============================================================================
         // ワールド座標距離算出
         //
