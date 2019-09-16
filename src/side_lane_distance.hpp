@@ -162,6 +162,8 @@ class LaneDistanceDetector {
     }
     int InitVideoCapture(int camera_number) {
         capture = cv::VideoCapture(camera_number);
+        capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
+        capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
         capture >> frame;
     }
     int InitVideoCapture(std::string video_file_path) {
