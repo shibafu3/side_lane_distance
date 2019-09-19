@@ -1,19 +1,9 @@
-#ifdef __WIN32
 #ifdef _DEBUG
 //Debugモードの場合
 #pragma comment(lib,"D:/home/Sources/opencv/opencv310/build/install/lib/opencv_world310d.lib")
 #else
 //Releaseモードの場合
 #pragma comment(lib,"D:/home/Sources/opencv/opencv310/build/install/lib/opencv_world310.lib") 
-#endif
-
-#ifdef _DEBUG
-//Debugモードの場合
-#pragma comment(lib,"D:/home/Sources/CANUSB/lib/canusbdrv64.lib")
-#else
-//Releaseモードの場合
-#pragma comment(lib,"D:/home/Sources/CANUSB/lib/canusbdrv64.lib")
-#endif
 #endif
 
 #include <iostream>
