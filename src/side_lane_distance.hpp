@@ -92,6 +92,7 @@ class LaneDistanceDetector {
 
     cv::Point2d cross_point;
     cv::Point2d cross_point_closest;
+    cv::Point2d world_point_closest;
     //=============================================================================
 
 
@@ -314,26 +315,25 @@ public :
         // ハフ変換（直線検出）                                             分解能、        閾値,          最小長,     最大長
         cv::HoughLinesP(masked_image, probabilistic_hough_lines, 1.0, CV_PI / 180, HOUGH_THRESHOLD, HOUGH_MIN, HOUGH_MAX);
         // 交点算出
+        world_point_closest = cv::Point2d(0.0, 100000.0);   // 変数初期化
         for (int i = 0; i < probabilistic_hough_lines.size(); ++i) {
             cv::Point2d C(probabilistic_hough_lines[i][0], probabilistic_hough_lines[i][1]);
             cv::Point2d D(probabilistic_hough_lines[i][2], probabilistic_hough_lines[i][3]);
             if (CalcCrossPoint(checkerLT, checkerLB, C, D, cross_point)) { continue; }
+            // 画像座標から世界座標算出
+            cv::Point2d world_point;
+            ConvertImagePoint2WorldPoint(cross_point, world_point);
             // 一番車両に近い交点抽出
-            if ((cross_point.y > cross_point_closest.y) && (540 > cross_point.y)) {
+            if (abs(world_point.y) < abs(world_point_closest.y)) {
                 cross_point_closest = cross_point;
+                world_point_closest = world_point;
             }
             // 表示
             cv::line(view_image, C, D, cv::Scalar(0, 0, 255), 1, CV_AA);
-            cv::line(view_image, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
         }
+        cv::line(view_image, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
         cv::circle(view_image, cross_point_closest, 3, cv::Scalar(0, 255, 0), 3);
-        // 画像座標から世界座標算出
-        cv::Point2d world_point;
-        ConvertImagePoint2WorldPoint(cross_point_closest, world_point);
-        // 変数初期化
-        cross_point_closest = cv::Point2d(0.0, -1000000000000.0);
-
-        return world_point.y;
+        return world_point_closest.y;
     }
     int ViewImage() {
         cv::imshow("view_image", view_image);
