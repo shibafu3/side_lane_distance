@@ -13,6 +13,7 @@
 //キャリブレーションモジュール
 #include <opencv2/calib3d/calib3d.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "webcam.h"
 
 
 class LaneDistanceDetector {
@@ -150,6 +151,16 @@ class LaneDistanceDetector {
         capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
         capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
         capture >> frame;
+
+        if (c_init()) { std::cout << "Error : c_init():" << std::endl; return 1; }
+
+        CHandle handle = c_open_device ("video0");
+        if (!handle) { std::cout << "Error : c_open_device():\n"; c_cleanup (); return 2; }
+
+        CControlValue value;
+        value.value = 0;
+        if (c_set_control(handle, CC_AUTO_FOCUS, &value)) { std::cout << "Error : c_set_control(): " << std::endl; }
+        if (c_set_control(handle, CC_FOCUS_ABSOLUTE, &value)) { std::cout << "Error : c_set_control(): " << std::endl; }
 
         return 0;
     }
