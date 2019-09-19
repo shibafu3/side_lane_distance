@@ -107,6 +107,8 @@ class LaneDistanceDetector {
         BINARY_THRESHOLD1 = 180;
         BINARY_THRESHOLD2 = 255;
         ARt_Z_inv = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
+
+        return 0;
     }
     //フィルターのパラメータ読み込み
     int ReadFilterParam(std::string file_path){
@@ -166,10 +168,14 @@ class LaneDistanceDetector {
         capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
         capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
         capture >> frame;
+
+        return 0;
     }
     int InitVideoCapture(std::string video_file_path) {
         capture = cv::VideoCapture(video_file_path);
         capture >> frame;
+
+        return 0;
     }
     int ConvertImagePoint2WorldPoint(cv::Point2d target_image_point, cv::Point2d &world_point){
         //=============================================================================
@@ -343,6 +349,8 @@ public :
         cv::imshow("differencial", differential_image);
         cv::imshow("mask", mask_image);
         cv::imshow("masked", masked_image);
+
+        return 0;
     }
     int ViewImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
         if (view) { cv::imshow("view_image", view_image); }
@@ -352,11 +360,14 @@ public :
         if (differencial) { cv::imshow("differencial", differential_image); }
         if (mask) { cv::imshow("mask", mask_image); }
         if (masked) { cv::imshow("masked", masked_image); }
+
+        return 0;
     }
     int OutputConsoleLog() {
         //cout << "gazou " << kouten_true_l.x << " " << kouten_true_l.y << endl;
         //std::cout << world_point.y;
         //ConsoleGraph(Y_l, 0.1, 100, 190);
+        return 0;
     }
 
 };
