@@ -66,6 +66,7 @@ class LaneDistanceDetector {
     // 画像処理変数宣言
     //-----------------------------------------------------------------------------
     cv::VideoCapture capture;
+    int camera_number;
 
     cv::Mat frame;
     cv::Mat remap_image;
@@ -163,8 +164,8 @@ class LaneDistanceDetector {
         mask_image = cv::imread(mask_image_file_path, 0);
         return 0;
     }
-    int InitVideoCapture(int camera_number) {
-        capture = cv::VideoCapture(camera_number);
+    int InitVideoCapture(int camera_num) {
+        capture = cv::VideoCapture(camera_num);
         capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
         capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
         capture >> frame;
@@ -280,7 +281,8 @@ public :
         ReadMaskImage(mask_image_path);
         InitVideoCapture(video_file_path);
     }
-    LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_number) {
+    LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num) {
+        camera_number = camera_num;
         InitDefaultParam();
         ReadFilterParam(filter_file_path);
         ReadCameraParam(internal_external_param_file_path);
@@ -342,24 +344,24 @@ public :
         return world_point_closest.y;
     }
     int ViewImage() {
-        cv::imshow("view_image", view_image);
-        cv::imshow("gray", gray_image);
-        cv::imshow("median", median_image);
-        cv::imshow("binary", binary_image);
-        cv::imshow("differencial", differential_image);
-        cv::imshow("mask", mask_image);
-        cv::imshow("masked", masked_image);
+        cv::imshow("view_image" + std::to_string(camera_number), view_image);
+        cv::imshow("gray" + std::to_string(camera_number), gray_image);
+        cv::imshow("median" + std::to_string(camera_number), median_image);
+        cv::imshow("binary" + std::to_string(camera_number), binary_image);
+        cv::imshow("differencial" + std::to_string(camera_number), differential_image);
+        cv::imshow("mask" + std::to_string(camera_number), mask_image);
+        cv::imshow("masked" + std::to_string(camera_number), masked_image);
 
         return 0;
     }
     int ViewImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
-        if (view) { cv::imshow("view_image", view_image); }
-        if (gray) { cv::imshow("gray", gray_image); }
-        if (median) { cv::imshow("median", median_image); }
-        if (binary) { cv::imshow("binary", binary_image); }
-        if (differencial) { cv::imshow("differencial", differential_image); }
-        if (mask) { cv::imshow("mask", mask_image); }
-        if (masked) { cv::imshow("masked", masked_image); }
+        if (view) { cv::imshow("view_image" + std::to_string(camera_number), view_image); }
+        if (gray) { cv::imshow("gray" + std::to_string(camera_number), gray_image); }
+        if (median) { cv::imshow("median" + std::to_string(camera_number), median_image); }
+        if (binary) { cv::imshow("binary" + std::to_string(camera_number), binary_image); }
+        if (differencial) { cv::imshow("differencial" + std::to_string(camera_number), differential_image); }
+        if (mask) { cv::imshow("mask" + std::to_string(camera_number), mask_image); }
+        if (masked) { cv::imshow("masked" + std::to_string(camera_number), masked_image); }
 
         return 0;
     }
