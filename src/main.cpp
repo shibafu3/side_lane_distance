@@ -6,9 +6,18 @@
 #pragma comment(lib,"D:/home/Sources/opencv/opencv310/build/install/lib/opencv_world310.lib") 
 #endif
 
+#ifdef _DEBUG
+//Debugモードの場合
+#pragma comment(lib,"D:/home/Sources/CANUSB/libs/canusbdrv64.lib")
+#else
+//Releaseモードの場合
+#pragma comment(lib,"D:/home/Sources/CANUSB/libs/canusbdrv64.lib")
+#endif
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include "lawicel_can.h"
 
 #include "side_lane_distance.hpp"
 
