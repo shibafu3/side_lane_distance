@@ -25,6 +25,18 @@
 using namespace std;
 using namespace cv;
 
+union MultiTypeUnion {
+    float float32[2];
+    uint_least8_t uint8[8];
+    int_least32_t int32[2];
+    uint_least32_t uint32[2];
+    MultiTypeUnion() {
+        uint32[0] = 0;
+        uint32[1] = 0;
+    }
+};
+
+
 int main(char argc, char *argv[]) {
     //現在日時を取得する
     time_t time_raw = time(nullptr);
