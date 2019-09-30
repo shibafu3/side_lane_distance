@@ -15,26 +15,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 
-union MultiTypeUnion {
-    float f[2];
-    int_least8_t c[8];
-    int_least32_t i[2];
-    uint_least32_t ui[2];
-};
-
-int ConsoleGraph(double value, double scale, int offset = 0, double max = 0) {
-    int bar_length = value * scale + offset;
-    if ((max != 0) && (bar_length > max)) { std::cout << std::endl; return 1; }
-    for (int i = 0; i < value * scale; ++i) {
-        std::cout << "|";
-    }
-    std::cout << std::endl;
-    return 0;
-}
-
-
-
-
 class LaneDistanceDetector {
     //=============================================================================
     // カメラ関係変数宣言
