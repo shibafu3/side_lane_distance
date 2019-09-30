@@ -14,6 +14,8 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "opencv2/core/cuda.hpp"
+#include "opencv2/imgproc.hpp"
 
 class LaneDistanceDetector {
     //=============================================================================
@@ -58,9 +60,25 @@ class LaneDistanceDetector {
     cv::Mat view_image;
 
     cv::Mat mask_image;
-    cv::Mat masked_image;
 
-    std::vector<cv::Vec4i> probabilistic_hough_lines;
+    cv::cuda::GpuMat gpu_src;
+    cv::cuda::GpuMat gpu_dst;
+    cv::cuda::GpuMat gframe;
+    cv::cuda::GpuMat gremapx;
+    cv::cuda::GpuMat gremapy;
+    cv::cuda::GpuMat gremap_image;
+    cv::cuda::GpuMat ggray_image;
+    cv::cuda::GpuMat gmedian_image;
+    cv::cuda::GpuMat gbinary_image;
+    cv::cuda::GpuMat gdifferential_image;
+    cv::cuda::GpuMat gmask_image;
+    cv::cuda::GpuMat gmasked_image;
+    cv::cuda::GpuMat ghough_result;
+    std::vector<cv::Vec2f> ghough_lines;
+
+    cv::Ptr<cv::cuda::Filter> gmedian;
+    cv::Ptr<cv::cuda::CannyEdgeDetector> gcanny;
+    cv::Ptr<cv::cuda::HoughLinesDetector> ghough;
     //=============================================================================
 
 
@@ -78,7 +96,17 @@ class LaneDistanceDetector {
     //=============================================================================
 
 
+    int InitGPU() {
+        gremapx.upload(remapx);
+        gremapy.upload(remapy);
+        gmask_image.upload(mask_image);
 
+        gmedian = cv::cuda::createMedianFilter(gpu_src.type(), MEDIAN_WINDOW_SIZE);
+        gcanny = cv::cuda::createCannyEdgeDetector(CANNY_THRESHOLD1, CANNY_THRESHOLD2);
+        ghough = cv::cuda::createHoughLinesDetector(1.0, CV_PI / 180, HOUGH_THRESHOLD, HOUGH_MIN, HOUGH_MAX);
+
+        return 0;
+    }
     int InitDefaultParam() {
         MEDIAN_WINDOW_SIZE = 21;
         CANNY_THRESHOLD1 = 50;
@@ -261,6 +289,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(video_file_path);
+		InitGPU();
     }
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num) {
         camera_number = camera_num;
@@ -269,6 +298,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
+		InitGPU();
     }
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num, std::string write_video_path) {
         camera_number = camera_num;
@@ -298,26 +328,34 @@ public :
     }
     double ProccessImage() {
         // 表示用に元画像コピー
-        frame.copyTo(view_image);
+        gframe.upload(frame);
         // 歪み補正
-        cv::remap(frame, remap_image, remapx, remapy, cv::INTER_LINEAR);
+        cv::cuda::remap(gframe, gremap_image, gremapx, gremapy, cv::INTER_LINEAR);
         // 白黒へ変換
-        cv::cvtColor(remap_image, gray_image, CV_RGB2GRAY);
+        cv::cuda::cvtColor(gremap_image, ggray_image, CV_RGB2GRAY);
         // メディアンフィルター
-        cv::medianBlur(gray_image, median_image, MEDIAN_WINDOW_SIZE);
+        gmedian->apply(ggray_image, gmedian_image);
         // 2値化
-        cv::threshold(median_image, binary_image, BINARY_THRESHOLD1, BINARY_THRESHOLD2, cv::THRESH_BINARY);
+        cv::cuda::threshold(gmedian_image, gbinary_image, BINARY_THRESHOLD1, BINARY_THRESHOLD2, cv::THRESH_BINARY);
         // 微分（エッジ検出）
-        cv::Canny(binary_image, differential_image, CANNY_THRESHOLD1, CANNY_THRESHOLD2);
+        gcanny->detect(gmedian_image, gdifferential_image);
         // マスク処理
-        differential_image.copyTo(masked_image, mask_image);
+        gdifferential_image.copyTo(gmasked_image, gmask_image);
         // ハフ変換（直線検出）                                             分解能、        閾値,          最小長,     最大長
-        cv::HoughLinesP(masked_image, probabilistic_hough_lines, 1.0, CV_PI / 180, HOUGH_THRESHOLD, HOUGH_MIN, HOUGH_MAX);
+        ghough->detect(gmasked_image, ghough_result);
+        ghough->downloadResults(ghough_result, ghough_lines);
         // 交点算出
         world_point_closest = cv::Point2d(0.0, 100000.0);   // 変数初期化
-        for (int i = 0; i < probabilistic_hough_lines.size(); ++i) {
-            cv::Point2d C(probabilistic_hough_lines[i][0], probabilistic_hough_lines[i][1]);
-            cv::Point2d D(probabilistic_hough_lines[i][2], probabilistic_hough_lines[i][3]);
+        for (int i = 0; i < ghough_lines.size(); ++i) {
+            float rho = ghough_lines[i][0], theta = ghough_lines[i][1];
+            cv::Point C, D;
+            double a = cos(theta), b = sin(theta);
+            double x0 = a*rho, y0 = b*rho;
+            C.x = cvRound(x0 + 1000 * (-b));
+            C.y = cvRound(y0 + 1000 * (a));
+            D.x = cvRound(x0 - 1000 * (-b));
+            D.y = cvRound(y0 - 1000 * (a));
+
             if (CalcCrossPoint(checkerLT, checkerLB, C, D, cross_point)) { continue; }
             // 画像座標から世界座標算出
             cv::Point2d world_point;
@@ -335,24 +373,40 @@ public :
         return world_point_closest.y;
     }
     int ViewImage() {
-        cv::imshow("view_image" + std::to_string(camera_number), view_image);
-        cv::imshow("gray" + std::to_string(camera_number), gray_image);
-        cv::imshow("median" + std::to_string(camera_number), median_image);
-        cv::imshow("binary" + std::to_string(camera_number), binary_image);
-        cv::imshow("differencial" + std::to_string(camera_number), differential_image);
-        cv::imshow("mask" + std::to_string(camera_number), mask_image);
-        cv::imshow("masked" + std::to_string(camera_number), masked_image);
+        cv::namedWindow("view_image", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("gray", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("median", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("binary", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("differencial", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("mask", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("masked", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+
+        cv::imshow("view_image" + std::to_string(camera_number), gframe);
+        cv::imshow("gray" + std::to_string(camera_number), ggray_image);
+        cv::imshow("median" + std::to_string(camera_number), gmedian_image);
+        cv::imshow("binary" + std::to_string(camera_number), gbinary_image);
+        cv::imshow("differencial" + std::to_string(camera_number), gdifferential_image);
+        cv::imshow("mask" + std::to_string(camera_number), gmask_image);
+        cv::imshow("masked" + std::to_string(camera_number), gmasked_image);
 
         return 0;
     }
     int ViewImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
-        if (view) { cv::imshow("view_image" + std::to_string(camera_number), view_image); }
-        if (gray) { cv::imshow("gray" + std::to_string(camera_number), gray_image); }
-        if (median) { cv::imshow("median" + std::to_string(camera_number), median_image); }
-        if (binary) { cv::imshow("binary" + std::to_string(camera_number), binary_image); }
-        if (differencial) { cv::imshow("differencial" + std::to_string(camera_number), differential_image); }
-        if (mask) { cv::imshow("mask" + std::to_string(camera_number), mask_image); }
-        if (masked) { cv::imshow("masked" + std::to_string(camera_number), masked_image); }
+        if (view) { cv::namedWindow("view_image", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (gray) { cv::namedWindow("gray", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (median) { cv::namedWindow("median", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (binary) { cv::namedWindow("binary", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (differencial) { cv::namedWindow("differencial", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (mask) { cv::namedWindow("mask", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (masked) { cv::namedWindow("masked", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+
+        if (view) { cv::imshow("view_image" + std::to_string(camera_number), gframe); }
+        if (gray) { cv::imshow("gray" + std::to_string(camera_number), ggray_image); }
+        if (median) { cv::imshow("median" + std::to_string(camera_number), gmedian_image); }
+        if (binary) { cv::imshow("binary" + std::to_string(camera_number), gbinary_image); }
+        if (differencial) { cv::imshow("differencial" + std::to_string(camera_number), gdifferential_image); }
+        if (mask) { cv::imshow("mask" + std::to_string(camera_number), gmask_image); }
+        if (masked) { cv::imshow("masked" + std::to_string(camera_number), gmasked_image); }
 
         return 0;
     }

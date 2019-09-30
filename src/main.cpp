@@ -24,7 +24,6 @@
 
 
 using namespace std;
-using namespace cv;
 
 int main(char argc, char *argv[]) {
     //現在日時を取得する
@@ -60,9 +59,9 @@ int main(char argc, char *argv[]) {
         cout << ldd2.ProccessImage() << endl;
         //ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
         //ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
-        waitKey(1);
+        cv::waitKey(1);
 
-        if (waitKey(1) == 27) { break; }
+        if (cv::waitKey(1) == 27) { break; }
         ++frame_count;
     }
     return 0;
