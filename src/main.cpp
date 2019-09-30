@@ -60,6 +60,27 @@ int main(char argc, char *argv[]) {
     int frame_count = 0;
 
 
+    CANHANDLE canhandle = -1;
+
+    MultiTypeUnion can_data1;
+    CANMsg canmsg_l;
+    canmsg_l.id = 0x124;
+    canmsg_l.len = 8;
+    canmsg_l.flags = 0;
+
+    MultiTypeUnion can_data2;
+    CANMsg canmsg_r;
+    canmsg_r.id = 0x125;
+    canmsg_r.len = 8;
+    canmsg_r.flags = 0;
+
+    if (!((canhandle = canusb_Open(NULL, "500", CANUSB_ACCEPTANCE_CODE_ALL, CANUSB_ACCEPTANCE_MASK_ALL, CANUSB_FLAG_TIMESTAMP)) > 0)) {
+        cout << "Can't find tha CANUSB device." << endl;
+        cout << "It will be runned on No CANUSB Mode" << endl;
+    }
+    Sleep(1000);
+
+
     LaneDistanceDetector ldd1("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 0);
     LaneDistanceDetector ldd2("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 2);
 
@@ -67,14 +88,28 @@ int main(char argc, char *argv[]) {
     while(1) {
         if (ldd1.ReadFrame()) { break; }
         if (ldd2.ReadFrame()) { break; }
-        cout << ldd1.ProccessImage() << endl;
-        cout << ldd2.ProccessImage() << endl;
+        can_data1.float32[0] = ldd1.ProccessImage();
+        can_data2.float32[0] = ldd2.ProccessImage();
+        cout << can_data1.float32[0] << endl;
+        cout << can_data2.float32[0] << endl;
         //ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
         //ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
-        waitKey(1);
+        //waitKey(1);
+
+        // Write CAN message
+        if (canhandle > 0) {
+            for (int i = 0; i < 8; ++i) {
+                canmsg_l.data[i] = can_data1.uint8[i];
+                canmsg_r.data[i] = can_data2.uint8[i];
+            }
+            canusb_Write(canhandle, &canmsg_l);
+            canusb_Write(canhandle, &canmsg_r);
+        }
 
         if (waitKey(1) == 27) { break; }
         ++frame_count;
     }
+
+    if (canhandle > 0) { canusb_Close(canhandle); }
     return 0;
 }
