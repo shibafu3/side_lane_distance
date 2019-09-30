@@ -24,13 +24,17 @@
 using namespace std;
 using namespace cv;
 
-int main() {
-    LaneDistanceDetector ldd("data/filter_param.xml", "data/in_external_param.xml", "data/mask_image.bmp", "data/Video2_20180625183321.avi");
+int main(char argc, char *argv[]) {
+    LaneDistanceDetector ldd1("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 0);
+    LaneDistanceDetector ldd2("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 2);
 
     while(1) {
-        if (ldd.ReadFrame()) { break; }
-        ldd.ProccessImage();
-        ldd.ViewImage(1, 0, 0, 0, 0, 0, 1);
+        if (ldd1.ReadFrame()) { break; }
+        if (ldd2.ReadFrame()) { break; }
+        cout << ldd1.ProccessImage() << endl;
+        cout << ldd2.ProccessImage() << endl;
+        //ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
+        //ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
         waitKey(1);
     }
     return 0;
