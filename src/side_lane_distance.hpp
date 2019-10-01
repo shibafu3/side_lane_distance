@@ -154,7 +154,7 @@ class LaneDistanceDetector {
 
         if (c_init()) { std::cout << "Error : c_init():" << std::endl; return 1; }
 
-        CHandle handle = c_open_device ("video0");
+        CHandle handle = c_open_device (std::string(("video" + std::to_string(camera_num))).c_str());
         if (!handle) { std::cout << "Error : c_open_device():\n"; c_cleanup (); return 2; }
 
         CControlValue value;
