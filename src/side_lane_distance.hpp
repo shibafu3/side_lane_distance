@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -46,6 +46,7 @@ class LaneDistanceDetector {
     // 画像処理変数宣言
     //-----------------------------------------------------------------------------
     cv::VideoCapture capture;
+	cv::VideoWriter writer;
     int camera_number;
 
     cv::Mat frame;
@@ -269,6 +270,15 @@ public :
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
     }
+    LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num, std::string write_video_path) {
+        camera_number = camera_num;
+        InitDefaultParam();
+        ReadFilterParam(filter_file_path);
+        ReadCameraParam(internal_external_param_file_path);
+        ReadMaskImage(mask_image_path);
+        InitVideoCapture(camera_number);
+        writer = cv::VideoWriter(write_video_path, cv::VideoWriter::fourcc('W', 'M', 'V', '1'), 15, frame.size());
+    }
     int OpenParamTrackbar() {
         cv::namedWindow("trackbar", cv::WINDOW_NORMAL);
         cv::createTrackbar("median", "trackbar", &MEDIAN_WINDOW_SIZE, 100);
@@ -283,6 +293,7 @@ public :
     }
     int ReadFrame() {
         capture >> frame;
+        writer << frame;
         return frame.empty();
     }
     double ProccessImage() {
