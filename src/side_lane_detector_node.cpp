@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     date_raw = localtime(&time_raw);
 
     //sに独自フォーマットになるように連結していく
-    std::stringstream s;
+    std::stringstream s, t;
     s << "20";
     s << setfill('0') << setw(2) << date_raw->tm_year - 100; //100を引くことで20xxのxxの部分になる
     s << setfill('0') << setw(2) << date_raw->tm_mon + 1; //月を0からカウントしているため
@@ -48,6 +48,10 @@ int main(int argc, char **argv) {
     s << setfill('0') << setw(2) << date_raw->tm_hour; //そのまま
     s << setfill('0') << setw(2) << date_raw->tm_min; //そのまま
     s << setfill('0') << setw(2) << date_raw->tm_sec; //そのまま
+    t << setfill('0') << setw(2) << date_raw->tm_mday; //そのまま
+    t << setfill('0') << setw(2) << date_raw->tm_hour; //そのまま
+    t << setfill('0') << setw(2) << date_raw->tm_min; //そのまま
+    t << setfill('0') << setw(2) << date_raw->tm_sec; //そのまま
     std::string video_file_name1 = s.str() + "_1.avi";
     std::string video_file_name2 = s.str() + "_2.avi";
 
@@ -66,15 +70,15 @@ int main(int argc, char **argv) {
         side_lane_distance_l.f[0] = ldd1.ProccessImage();
         side_lane_distance_r.f[0] = ldd2.ProccessImage();
         side_lane_frame_l.f[0] = frame_count;
-        side_lane_frame_r.f[0] = frame_count;
+        side_lane_frame_r.ui[0] = stol(t.str());
 
         side_lane_distance_l_publisher.publish(side_lane_distance_l.ul);
         side_lane_distance_r_publisher.publish(side_lane_distance_r.ul);
         side_lane_frame_l_publisher.publish(side_lane_frame_l.ul);
         side_lane_frame_r_publisher.publish(side_lane_frame_r.ul);
 
-        cout << side_lane_distance_l.f[0] << endl;
-        cout << side_lane_distance_r.f[0] << endl;
+        cout << t.str() << " " << side_lane_frame_l.f[0] << " " << side_lane_distance_l.f[0] << endl;
+        cout << side_lane_frame_r.ui[0] << " " << side_lane_frame_l.f[0] << " " << side_lane_distance_r.f[0] << endl;
         ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
         ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
         if (cv::waitKey(1) == 27) { break; }
