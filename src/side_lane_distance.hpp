@@ -48,7 +48,7 @@ class LaneDistanceDetector {
     // 画像処理変数宣言
     //-----------------------------------------------------------------------------
     cv::VideoCapture capture;
-	cv::VideoWriter writer;
+	cv::Ptr<cv::cudacodec::VideoWriter> gwriter;
     int camera_number;
 
     cv::Mat frame;
@@ -178,12 +178,14 @@ class LaneDistanceDetector {
         capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
         capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
         capture >> frame;
+        gframe.upload(frame);
 
         return 0;
     }
     int InitVideoCapture(std::string video_file_path) {
         capture = cv::VideoCapture(video_file_path);
         capture >> frame;
+        gframe.upload(frame);
 
         return 0;
     }
@@ -307,7 +309,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
-        writer = cv::VideoWriter(write_video_path, cv::VideoWriter::fourcc('W', 'M', 'V', '1'), 15, frame.size());
+        gwriter = cv::cudacodec::createVideoWriter(write_video_path, gframe.size(), 15);
     }
     int OpenParamTrackbar() {
         cv::namedWindow("trackbar", cv::WINDOW_NORMAL);
@@ -323,7 +325,6 @@ public :
     }
     int ReadFrame() {
         capture >> frame;
-        writer << frame;
         return frame.empty();
     }
     double ProccessImage() {
@@ -370,6 +371,9 @@ public :
         }
         cv::line(frame, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
         cv::circle(frame, cross_point_closest, 3, cv::Scalar(0, 255, 0), 3);
+        if (gwriter != nullptr) {
+            gwriter->write(gframe);
+        }
         return world_point_closest.y;
     }
     int ViewImage() {
