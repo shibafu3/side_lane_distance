@@ -30,8 +30,8 @@ int main(char argc, char *argv[]) {
     int frame_count = 0;
 
 
-    LaneDistanceDetector ldd1("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 0);
-    LaneDistanceDetector ldd2("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 2);
+    LaneDistanceDetector ldd1("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 0, "testl.wmv");
+    LaneDistanceDetector ldd2("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 1, "testr.wmv");
 
 
     while(1) {
@@ -39,8 +39,8 @@ int main(char argc, char *argv[]) {
         if (ldd2.ReadFrame()) { break; }
         cout << ldd1.ProccessImage() << endl;
         cout << ldd2.ProccessImage() << endl;
-        //ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
-        //ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
+        ldd1.ViewImage(1, 0, 0, 0, 0, 0, 1);
+        ldd2.ViewImage(1, 0, 0, 0, 0, 0, 1);
         cv::waitKey(1);
 
         if (cv::waitKey(1) == 27) { break; }
