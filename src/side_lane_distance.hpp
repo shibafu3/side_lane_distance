@@ -366,22 +366,22 @@ public :
                 world_point_closest = world_point;
             }
             // 表示
-            cv::line(view_image, C, D, cv::Scalar(0, 0, 255), 1, CV_AA);
+            cv::line(frame, C, D, cv::Scalar(0, 0, 255), 1, CV_AA);
         }
-        cv::line(view_image, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
-        cv::circle(view_image, cross_point_closest, 3, cv::Scalar(0, 255, 0), 3);
+        cv::line(frame, checkerLT, checkerLB, cv::Scalar(255, 255, 0), 1, CV_AA);
+        cv::circle(frame, cross_point_closest, 3, cv::Scalar(0, 255, 0), 3);
         return world_point_closest.y;
     }
     int ViewImage() {
-        cv::namedWindow("view_image", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("gray", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("median", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("binary", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("differencial", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("mask", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
-        cv::namedWindow("masked", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("view_image" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("gray" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("median" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("binary" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("differencial" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("mask" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
+        cv::namedWindow("masked" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL);
 
-        cv::imshow("view_image" + std::to_string(camera_number), gframe);
+        cv::imshow("view_image" + std::to_string(camera_number), frame);
         cv::imshow("gray" + std::to_string(camera_number), ggray_image);
         cv::imshow("median" + std::to_string(camera_number), gmedian_image);
         cv::imshow("binary" + std::to_string(camera_number), gbinary_image);
@@ -392,15 +392,15 @@ public :
         return 0;
     }
     int ViewImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
-        if (view) { cv::namedWindow("view_image", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (gray) { cv::namedWindow("gray", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (median) { cv::namedWindow("median", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (binary) { cv::namedWindow("binary", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (differencial) { cv::namedWindow("differencial", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (mask) { cv::namedWindow("mask", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
-        if (masked) { cv::namedWindow("masked", cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (view) { cv::namedWindow("view_image" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (gray) { cv::namedWindow("gray" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (median) { cv::namedWindow("median" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (binary) { cv::namedWindow("binary" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (differencial) { cv::namedWindow("differencial" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (mask) { cv::namedWindow("mask" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (masked) { cv::namedWindow("masked" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
 
-        if (view) { cv::imshow("view_image" + std::to_string(camera_number), gframe); }
+        if (view) { cv::imshow("view_image" + std::to_string(camera_number), frame); }
         if (gray) { cv::imshow("gray" + std::to_string(camera_number), ggray_image); }
         if (median) { cv::imshow("median" + std::to_string(camera_number), gmedian_image); }
         if (binary) { cv::imshow("binary" + std::to_string(camera_number), gbinary_image); }
