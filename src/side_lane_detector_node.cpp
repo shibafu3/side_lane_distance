@@ -58,8 +58,8 @@ int main(int argc, char **argv) {
     int frame_count = 0;
 
 
-    LaneDistanceDetector ldd1("/home/nvidia/catkin_ws/src/side_lane_detector/sample/filter_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/in_external_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/mask_image.bmp", 0);
-    LaneDistanceDetector ldd2("/home/nvidia/catkin_ws/src/side_lane_detector/sample/filter_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/in_external_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/mask_image.bmp", 1);
+    LaneDistanceDetector ldd1("/home/nvidia/catkin_ws/src/side_lane_detector/sample/filter_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/in_external_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/mask_image.bmp", 0, "l.wmv");
+    LaneDistanceDetector ldd2("/home/nvidia/catkin_ws/src/side_lane_detector/sample/filter_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/in_external_param.xml", "/home/nvidia/catkin_ws/src/side_lane_detector/sample/mask_image.bmp", 1, "r.wmv");
 
 
 
