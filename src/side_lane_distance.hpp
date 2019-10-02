@@ -298,7 +298,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
-		InitGPU();
+        InitGPU();
     }
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num, std::string write_video_path) {
         camera_number = camera_num;
@@ -307,6 +307,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(camera_number);
+        InitGPU();
         writer = cv::VideoWriter(write_video_path, cv::VideoWriter::fourcc('W', 'M', 'V', '1'), 15, frame.size());
     }
     int OpenParamTrackbar() {
