@@ -411,6 +411,47 @@ public :
 
         return 0;
     }
+    int ViewResizeImage(int view = 0, int gray = 0, int median = 0, int binary = 0, int differencial = 0, int mask = 0, int masked = 0) {
+        if (view) { cv::namedWindow("view_image" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (gray) { cv::namedWindow("gray" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (median) { cv::namedWindow("median" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (binary) { cv::namedWindow("binary" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (differencial) { cv::namedWindow("differencial" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (mask) { cv::namedWindow("mask" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+        if (masked) { cv::namedWindow("masked" + std::to_string(camera_number), cv::WINDOW_AUTOSIZE | cv::WINDOW_OPENGL); }
+
+
+        if (view) {
+            cv::resize(frame, frame, cv::Size(), 0.5, 0.5);
+            cv::imshow("view_image" + std::to_string(camera_number), frame);
+        }
+        if (gray) {
+            cv::cuda::resize(ggray_image, ggray_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("gray" + std::to_string(camera_number), ggray_image);
+        }
+        if (median) {
+            cv::cuda::resize(gmedian_image, gmedian_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("median" + std::to_string(camera_number), gmedian_image);
+        }
+        if (binary) {
+            cv::cuda::resize(gbinary_image, gbinary_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("binary" + std::to_string(camera_number), gbinary_image);
+        }
+        if (differencial) {
+            cv::cuda::resize(gdifferential_image, gdifferential_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("differencial" + std::to_string(camera_number), gdifferential_image);
+        }
+        if (mask) {
+            cv::cuda::resize(gmask_image, gmask_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("mask" + std::to_string(camera_number), gmask_image);
+        }
+        if (masked) {
+            cv::cuda::resize(gmasked_image, gmasked_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("masked" + std::to_string(camera_number), gmasked_image);
+        }
+
+        return 0;
+    }
     int OutputConsoleLog() {
         //cout << "gazou " << kouten_true_l.x << " " << kouten_true_l.y << endl;
         //std::cout << world_point.y;
