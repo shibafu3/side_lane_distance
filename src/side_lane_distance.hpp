@@ -48,7 +48,7 @@ class LaneDistanceDetector {
     // 画像処理変数宣言
     //-----------------------------------------------------------------------------
     cv::VideoCapture capture;
-	cv::VideoWriter writer;
+    cv::VideoWriter writer;
     int camera_number;
 
     cv::Mat frame;
@@ -289,7 +289,7 @@ public :
         ReadCameraParam(internal_external_param_file_path);
         ReadMaskImage(mask_image_path);
         InitVideoCapture(video_file_path);
-		InitGPU();
+        InitGPU();
     }
     LaneDistanceDetector(std::string filter_file_path, std::string internal_external_param_file_path, std::string mask_image_path, int camera_num) {
         camera_number = camera_num;
