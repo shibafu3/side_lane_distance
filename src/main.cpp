@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include "lawicel_can.h"
 
 #include "side_lane_distance.hpp"
@@ -21,28 +22,64 @@ union MultiTypeUnion {
 
 
 int main(char argc, char *argv[]) {
-    //現在日時を取得する
-    time_t time_raw = time(nullptr);
+	//現在日時を取得する
+	time_t time_raw = time(nullptr);
 
-    //形式を変換する
-    tm date_raw;
-    localtime_s(&date_raw, &time_raw);
+	//形式を変換する
+	tm date_raw;
+	localtime_s(&date_raw, &time_raw);
 
-    //sに独自フォーマットになるように連結していく
-    std::stringstream s, t;
-    s << "20";
-    s << setfill('0') << setw(2) << date_raw.tm_year - 100; //100を引くことで20xxのxxの部分になる
-    s << setfill('0') << setw(2) << date_raw.tm_mon + 1; //月を0からカウントしているため
-    s << setfill('0') << setw(2) << date_raw.tm_mday; //そのまま
-    s << setfill('0') << setw(2) << date_raw.tm_hour; //そのまま
-    s << setfill('0') << setw(2) << date_raw.tm_min; //そのまま
-    s << setfill('0') << setw(2) << date_raw.tm_sec; //そのまま
-    t << setfill('0') << setw(2) << date_raw.tm_mday; //そのまま
-    t << setfill('0') << setw(2) << date_raw.tm_hour; //そのまま
-    t << setfill('0') << setw(2) << date_raw.tm_min; //そのまま
-    t << setfill('0') << setw(2) << date_raw.tm_sec; //そのまま
-    std::string video_file_name1 = s.str() + "_1.avi";
-    std::string video_file_name2 = s.str() + "_2.avi";
+	//sに独自フォーマットになるように連結していく
+	std::stringstream s, t;
+	s << "20";
+	s << setfill('0') << setw(2) << date_raw.tm_year - 100; //100を引くことで20xxのxxの部分になる
+	s << setfill('0') << setw(2) << date_raw.tm_mon + 1; //月を0からカウントしているため
+	s << setfill('0') << setw(2) << date_raw.tm_mday; //そのまま
+	s << setfill('0') << setw(2) << date_raw.tm_hour; //そのまま
+	s << setfill('0') << setw(2) << date_raw.tm_min; //そのまま
+	s << setfill('0') << setw(2) << date_raw.tm_sec; //そのまま
+	t << setfill('0') << setw(2) << date_raw.tm_mday; //そのまま
+	t << setfill('0') << setw(2) << date_raw.tm_hour; //そのまま
+	t << setfill('0') << setw(2) << date_raw.tm_min; //そのまま
+	t << setfill('0') << setw(2) << date_raw.tm_sec; //そのまま
+	std::string video_file_name1 = s.str() + "_1.avi";
+	std::string video_file_name2 = s.str() + "_2.avi";
+
+
+    string filter_param_l_file_path = "sample/filter_param.xml";
+    string filter_param_r_file_path = "sample/filter_param.xml";
+    string in_external_paraml_l_file_path = "sample/in_external_param.xml";
+    string in_external_paraml_r_file_path = "sample/in_external_param.xml";
+    string mask_image_l_file_path = "sample/mask_image.bmp";
+    string mask_image_r_file_path = "sample/mask_image.bmp";
+    string write_video_l_file_path = "test_l.wmv";
+    string write_video_r_file_path = "test_r.wmv";
+    int camera_num1 = 0;
+    int camera_num2 = 1;
+	if (argc == 9) {
+		camera_num1 = stoi(argv[1]);
+		camera_num2 = stoi(argv[2]);
+		filter_param_l_file_path = string(argv[3]);
+		filter_param_r_file_path = string(argv[4]);
+		in_external_paraml_l_file_path = string(argv[5]);
+		in_external_paraml_r_file_path = string(argv[6]);
+		mask_image_l_file_path = string(argv[7]);
+		mask_image_r_file_path = string(argv[8]);
+		write_video_l_file_path = video_file_name1;
+		write_video_r_file_path = video_file_name2;
+	}
+	if (argc == 11) {
+		camera_num1 = stoi(argv[1]);
+		camera_num2 = stoi(argv[2]);
+		filter_param_l_file_path = string(argv[3]);
+		filter_param_r_file_path = string(argv[4]);
+		in_external_paraml_l_file_path = string(argv[5]);
+		in_external_paraml_r_file_path = string(argv[6]);
+		mask_image_l_file_path = string(argv[7]);
+		mask_image_r_file_path = string(argv[8]);
+		write_video_l_file_path = string(argv[9]);
+		write_video_r_file_path = string(argv[10]);
+	}
 
     int frame_count = 0;
 
@@ -82,8 +119,8 @@ int main(char argc, char *argv[]) {
     if (canhandle <= 0) { return -1; }
 
 
-    LaneDistanceDetector ldd1("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 0, "testl.wmv");
-    LaneDistanceDetector ldd2("sample/filter_param.xml", "sample/in_external_param.xml", "sample/mask_image.bmp", 1, "testr.wmv");
+    LaneDistanceDetector ldd1(filter_param_l_file_path, in_external_paraml_l_file_path, mask_image_l_file_path, camera_num1, write_video_l_file_path);
+    LaneDistanceDetector ldd2(filter_param_r_file_path, in_external_paraml_r_file_path, mask_image_r_file_path, camera_num2, write_video_r_file_path);
 
 
     while(1) {
