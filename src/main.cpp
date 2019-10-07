@@ -73,6 +73,8 @@ int main(char argc, char *argv[]) {
     canmsg0x126.len = 8;
     canmsg0x126.flags = 0;
 
+	char *szAdapter = NULL;
+	cout << "Find the \"" << canusb_getFirstAdapter(szAdapter, 32) << "\" CANUSB devices." << endl;
     if (!((canhandle = canusb_Open(NULL, "500", CANUSB_ACCEPTANCE_CODE_ALL, CANUSB_ACCEPTANCE_MASK_ALL, CANUSB_FLAG_TIMESTAMP)) > 0)) {
         cout << "Can't initialize the CANUSB device. Please rerun this program or recoonect the CANUSB devicel." << endl;
         Sleep(3000);
