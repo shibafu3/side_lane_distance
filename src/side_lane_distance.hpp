@@ -422,8 +422,8 @@ public :
 
 
         if (view) {
-            cv::resize(frame, frame, cv::Size(), 0.5, 0.5);
-            cv::imshow("view_image" + std::to_string(camera_number), frame);
+            cv::resize(frame, view_image, cv::Size(), 0.5, 0.5);
+            cv::imshow("view_image" + std::to_string(camera_number), view_image);
         }
         if (gray) {
             cv::cuda::resize(ggray_image, ggray_image, cv::Size(), 0.5, 0.5);
