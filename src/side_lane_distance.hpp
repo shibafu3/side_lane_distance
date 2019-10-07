@@ -17,6 +17,8 @@
 #include "opencv2/core/cuda.hpp"
 #include "opencv2/imgproc.hpp"
 
+#include "ewclib.h"
+
 class LaneDistanceDetector {
     //=============================================================================
     // カメラ関係変数宣言
@@ -51,7 +53,7 @@ class LaneDistanceDetector {
     cv::VideoWriter writer;
     int camera_number;
 
-    cv::Mat frame;
+    cv::Mat_<cv::Vec3b> frame;
     cv::Mat remap_image;
     cv::Mat gray_image;
     cv::Mat median_image;
@@ -174,12 +176,12 @@ class LaneDistanceDetector {
         return 0;
     }
     int InitVideoCapture(int camera_num) {
-        capture = cv::VideoCapture(camera_num);
-        capture.set(CV_CAP_PROP_FRAME_WIDTH, remapx.size().width);
-        capture.set(CV_CAP_PROP_FRAME_HEIGHT, remapx.size().height);
-        capture >> frame;
+        camera_number = camera_num;
+        int is_error = EWC_Open(camera_number, remapx.size().width, remapx.size().height, 30, camera_number, MEDIASUBTYPE_RGB24);
+        frame = cv::Mat_<cv::Vec3b>(remapx.size().height, remapx.size().width);
+        EWC_GetImage(camera_number, frame.data);
 
-        return 0;
+        return is_error;
     }
     int InitVideoCapture(std::string video_file_path) {
         capture = cv::VideoCapture(video_file_path);
@@ -323,7 +325,12 @@ public :
         return 0;
     }
     int ReadFrame() {
-        capture >> frame;
+        if (capture.isOpened()) {
+            capture >> frame;
+        }
+        else {
+            EWC_GetImage(camera_number, frame.data);
+        }
         writer << frame;
         return frame.empty();
     }
