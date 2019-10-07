@@ -50,28 +50,28 @@ int main(char argc, char *argv[]) {
     CANHANDLE canhandle = -1;
 
     MultiTypeUnion distance_l;
-    CANMsg canmsg123;
-    canmsg123.id = 0x123;
-    canmsg123.len = 8;
-    canmsg123.flags = 0;
+    CANMsg canmsg0x123;
+    canmsg0x123.id = 0x123;
+    canmsg0x123.len = 8;
+    canmsg0x123.flags = 0;
 
     MultiTypeUnion distance_r;
-    CANMsg canmsg124;
-    canmsg124.id = 124;
-    canmsg124.len = 8;
-    canmsg124.flags = 0;
+    CANMsg canmsg0x124;
+    canmsg0x124.id = 0x124;
+    canmsg0x124.len = 8;
+    canmsg0x124.flags = 0;
 
     MultiTypeUnion frame_l;
-    CANMsg canmsg125;
-    canmsg125.id = 125;
-    canmsg125.len = 8;
-    canmsg125.flags = 0;
+    CANMsg canmsg0x125;
+    canmsg0x125.id = 0x125;
+    canmsg0x125.len = 8;
+    canmsg0x125.flags = 0;
 
     MultiTypeUnion frame_r;
-    CANMsg canmsg126;
-    canmsg126.id = 126;
-    canmsg126.len = 8;
-    canmsg126.flags = 0;
+    CANMsg canmsg0x126;
+    canmsg0x126.id = 0x126;
+    canmsg0x126.len = 8;
+    canmsg0x126.flags = 0;
 
     if (!((canhandle = canusb_Open(NULL, "500", CANUSB_ACCEPTANCE_CODE_ALL, CANUSB_ACCEPTANCE_MASK_ALL, CANUSB_FLAG_TIMESTAMP)) > 0)) {
         cout << "Can't initialize the CANUSB device. Please rerun this program or recoonect the CANUSB devicel." << endl;
@@ -100,15 +100,15 @@ int main(char argc, char *argv[]) {
         // Write CAN message
         if (canhandle > 0) {
             for (int i = 0; i < 8; ++i) {
-                canmsg123.data[i] = distance_l.uint8[i];
-                canmsg124.data[i] = distance_r.uint8[i];
-                canmsg125.data[i] = frame_l.uint8[i];
-                canmsg126.data[i] = frame_r.uint8[i];
+                canmsg0x123.data[i] = distance_l.uint8[i];
+                canmsg0x124.data[i] = distance_r.uint8[i];
+                canmsg0x125.data[i] = frame_l.uint8[i];
+                canmsg0x126.data[i] = frame_r.uint8[i];
             }
-            canusb_Write(canhandle, &canmsg123);
-            canusb_Write(canhandle, &canmsg124);
-            canusb_Write(canhandle, &canmsg125);
-            canusb_Write(canhandle, &canmsg126);
+            canusb_Write(canhandle, &canmsg0x123);
+            canusb_Write(canhandle, &canmsg0x124);
+            canusb_Write(canhandle, &canmsg0x125);
+            canusb_Write(canhandle, &canmsg0x126);
         }
 
         ldd1.ViewResizeImage(1, 0, 0, 0, 0, 0, 1);
