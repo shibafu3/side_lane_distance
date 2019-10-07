@@ -495,7 +495,7 @@ typedef struct DxtKey DxtKey;
 /* header files for imported files */
 #include "oaidl.h"
 #include "ocidl.h"
-#include "dxtrans.h"
+//#include "dxtrans.h"
 #include "amstream.h"
 
 #ifdef __cplusplus
@@ -834,7 +834,7 @@ EXTERN_C const IID IID_IDxtCompositor;
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
     MIDL_INTERFACE("BB44391E-6ABD-422f-9E2E-385C9DFF51FC")
-    IDxtCompositor : public IDXEffect
+    IDxtCompositor : //public IDXEffect
     {
     public:
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OffsetX( 
@@ -1148,7 +1148,7 @@ EXTERN_C const IID IID_IDxtAlphaSetter;
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
     MIDL_INTERFACE("4EE9EAD9-DA4D-43d0-9383-06B90C08B12B")
-    IDxtAlphaSetter : public IDXEffect
+    IDxtAlphaSetter : //public IDXEffect
     {
     public:
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Alpha( 
@@ -1342,7 +1342,7 @@ EXTERN_C const IID IID_IDxtJpeg;
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
     MIDL_INTERFACE("DE75D011-7A65-11D2-8CEA-00A0C9441E20")
-    IDxtJpeg : public IDXEffect
+    IDxtJpeg : //public IDXEffect
     {
     public:
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_MaskNum( 
@@ -1732,7 +1732,7 @@ EXTERN_C const IID IID_IDxtKey;
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
     MIDL_INTERFACE("3255de56-38fb-4901-b980-94b438010d7b")
-    IDxtKey : public IDXEffect
+    IDxtKey : //public IDXEffect
     {
     public:
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_KeyType( 
