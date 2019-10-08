@@ -46,14 +46,14 @@ int main(char argc, char *argv[]) {
 	std::string video_file_name2 = s.str() + "_2.avi";
 
 
-    string filter_param_l_file_path = "sample/filter_param.xml";
-    string filter_param_r_file_path = "sample/filter_param.xml";
-    string in_external_paraml_l_file_path = "sample/in_external_param.xml";
-    string in_external_paraml_r_file_path = "sample/in_external_param.xml";
-    string mask_image_l_file_path = "sample/mask_image.bmp";
-    string mask_image_r_file_path = "sample/mask_image.bmp";
-    string write_video_l_file_path = "test_l.wmv";
-    string write_video_r_file_path = "test_r.wmv";
+    string filter_param_l_file_path = "sample/filter_param_l.xml";
+    string filter_param_r_file_path = "sample/filter_param_r.xml";
+    string in_external_paraml_l_file_path = "sample/in_external_param_l.xml";
+    string in_external_paraml_r_file_path = "sample/in_external_param_r.xml";
+    string mask_image_l_file_path = "sample/mask_image_l.jpg";
+    string mask_image_r_file_path = "sample/mask_image_r.jpg";
+    string write_video_l_file_path = video_file_name1;
+    string write_video_r_file_path = video_file_name2;
     int camera_num1 = 0;
     int camera_num2 = 1;
 	if (argc == 9) {
