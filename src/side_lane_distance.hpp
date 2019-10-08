@@ -178,6 +178,7 @@ class LaneDistanceDetector {
     int InitVideoCapture(int camera_num) {
         camera_number = camera_num;
         int is_error = EWC_Open(camera_number, remapx.size().width, remapx.size().height, 30, camera_number, MEDIASUBTYPE_RGB24);
+        EWC_SetValue(camera_number, EWC_FOCUS, 0.0);
         frame = cv::Mat_<cv::Vec3b>(remapx.size().height, remapx.size().width);
         EWC_GetImage(camera_number, frame.data);
 
